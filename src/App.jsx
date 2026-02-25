@@ -157,14 +157,14 @@ function App() {
                       <div className="flex flex-col gap-1 pr-2 border-r border-black/20">
                         <div className="flex gap-[2px]">
                           {s.front.tiles.map(t => (
-                            <img key={`f-${t.id}`} src={`/images/${t.id.split('_')[0]}.png`} className="w-[20px] h-[38px] rounded-[2px]" alt="tile" />
+                            <Tile key={`f-${t.id}`} tile={t} small disabled />
                           ))}
                         </div>
                       </div>
                       <div className="flex flex-col gap-1 pl-1">
                         <div className="flex gap-[2px]">
                           {s.rear.tiles.map(t => (
-                            <img key={`r-${t.id}`} src={`/images/${t.id.split('_')[0]}.png`} className="w-[20px] h-[38px] rounded-[2px]" alt="tile" />
+                            <Tile key={`r-${t.id}`} tile={t} small disabled />
                           ))}
                         </div>
                       </div>
