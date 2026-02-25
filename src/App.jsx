@@ -51,10 +51,10 @@ function App() {
   };
 
   return (
-    // 使用 overflow-hidden 結合 h-screen 確保手機版不會出現討厭的捲動條
-    <div className="h-screen w-full overflow-hidden bg-[#5b896b] py-2 sm:py-6 px-2 md:px-10 flex flex-col font-sans text-white relative flex-1">
+    // 使用 min-h-screen 與 overflow-y-auto 允許使用者由上向下滑動以檢視手牌與按鈕區
+    <div className="min-h-screen w-full overflow-y-auto overflow-x-hidden bg-[#5b896b] py-2 sm:py-6 px-2 md:px-10 flex flex-col font-sans text-white relative">
       {/* 頂部全區未分配牌，兩排陳列 */}
-      <h1 className="text-lg md:text-2xl font-bold mb-2 text-white/80 drop-shadow flex flex-col sm:flex-row items-center gap-1 md:gap-4 text-center sm:text-left shrink-0">
+      <h1 className="text-lg md:text-2xl font-bold mb-2 mt-2 text-white/80 drop-shadow flex flex-col sm:flex-row items-center gap-1 md:gap-4 text-center sm:text-left shrink-0">
         天九牌 GTO 分析系統
         <span className="text-[10px] sm:text-xs font-normal text-white/50 bg-black/30 px-2 py-1 rounded">※ 點擊牌將其移入手牌 / 棄牌堆</span>
       </h1>
