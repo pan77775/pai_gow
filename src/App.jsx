@@ -59,7 +59,7 @@ function App() {
       </h1>
 
       <div className="mb-10 w-full flex justify-center">
-        <div className="grid grid-cols-16 gap-[2px] max-w-fit bg-black/20 p-2 rounded-lg border border-black/40 shadow-inner">
+        <div className="grid grid-cols-[repeat(16,minmax(0,1fr))] gap-[2px] max-w-fit bg-black/20 p-2 rounded-lg border border-black/40 shadow-inner">
           {TILES.map((tile) => {
             const isUsed = playerHand.some(p => p.id === tile.id) || discardPile.some(d => d.id === tile.id);
             return (
@@ -74,37 +74,37 @@ function App() {
         </div>
       </div>
 
-      <div className="flex gap-10 flex-col lg:flex-row max-w-[1400px]">
+      <div className="flex gap-10 flex-col xl:flex-row w-full max-w-[1400px] justify-center items-start">
         {/* 左側與中間區塊 (標題與 Tiles) */}
-        <div className="flex flex-col gap-6 lg:min-w-[600px]">
+        <div className="flex flex-col gap-6 w-full xl:w-auto">
 
           {/* Tiles in your hand */}
-          <div className="flex items-center">
-            <h2 className="text-2xl w-64 text-white drop-shadow-[1px_2px_3px_rgba(0,0,0,0.8)] font-medium tracking-wide">
+          <div className="flex items-center justify-between xl:justify-start gap-4">
+            <h2 className="text-2xl w-[280px] text-right text-white drop-shadow-[1px_2px_3px_rgba(0,0,0,0.8)] font-medium tracking-wide">
               Tiles in your hand:
             </h2>
-            <div className="flex gap-1">
+            <div className="flex gap-1 bg-black/10 p-2 rounded-lg border border-transparent min-w-[240px]">
               {playerHand.map(tile => (
                 <Tile key={`p-${tile.id}`} tile={tile} onClick={() => handleTileClick(tile, 'player')} />
               ))}
               {Array.from({ length: Math.max(0, 4 - playerHand.length) }).map((_, i) => (
-                <div key={`empty-p-${i}`} className="w-[50px] h-[95px] rounded border border-black/30 bg-[#2d5037] m-1 shadow-inner opacity-60"></div>
+                <Tile key={`empty-p-${i}`} tile={null} />
               ))}
             </div>
           </div>
 
           {/* Discards / Dealer */}
-          <div className="flex items-start mt-2">
-            <h2 className="text-2xl w-64 text-white drop-shadow-[1px_2px_3px_rgba(0,0,0,0.8)] font-medium tracking-wide mt-8">
+          <div className="flex items-start justify-between xl:justify-start gap-4 mt-2">
+            <h2 className="text-2xl w-[280px] text-right text-white drop-shadow-[1px_2px_3px_rgba(0,0,0,0.8)] font-medium tracking-wide mt-2">
               Tiles in discard pile:
             </h2>
-            <div className="flex flex-wrap max-w-[450px] gap-1 bg-black/10 p-2 rounded-lg border border-black/20 min-h-[110px]">
+            <div className="flex flex-wrap max-w-[480px] gap-1 bg-black/10 p-2 rounded-lg border border-black/20 min-h-[115px]">
               {discardPile.map(tile => (
                 <Tile key={`d-${tile.id}`} tile={tile} onClick={() => handleTileClick(tile, 'discard')} />
               ))}
               {discardPile.length < 16 && (
                 <div
-                  className="w-[50px] h-[95px] rounded border border-dashed border-white/20 hover:bg-black/20 m-1 flex items-center justify-center text-white/30 text-xs cursor-pointer shadow-inner transition-colors"
+                  className="w-[50px] h-[95px] rounded-md border-2 border-dashed border-white/20 hover:bg-black/20 m-[2px] flex items-center justify-center text-white/30 text-xs cursor-pointer shadow-inner transition-colors"
                   onClick={() => alert("從上方未分配區點擊加入")}
                 >
                   空位
@@ -114,7 +114,7 @@ function App() {
           </div>
 
           {/* 控制按鈕區 */}
-          <div className="flex gap-4 mt-6 ml-[256px]">
+          <div className="flex gap-4 mt-6 xl:ml-[296px] justify-center xl:justify-start">
             <button
               onClick={reset}
               className="px-6 py-2 bg-[#d8d8d8] text-black font-bold text-lg rounded shadow-3d-btn active:shadow-3d-btn-pressed hover:bg-white transition-all transform active:translate-y-1"

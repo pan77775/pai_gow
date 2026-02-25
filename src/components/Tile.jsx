@@ -73,7 +73,7 @@ export default function Tile({ tile, onClick, selected, disabled, small = false 
     if (!tile) {
         // 佔位符
         return (
-            <div className={`${baseWidth} ${baseHeight} rounded-md border border-white/10 bg-[#111] shadow-tile m-1`}></div>
+            <div className={`${baseWidth} ${baseHeight} shrink-0 rounded-md border border-white/10 bg-black shadow-tile flex items-center justify-center opacity-40 m-[2px]`}></div>
         );
     }
 
@@ -81,11 +81,11 @@ export default function Tile({ tile, onClick, selected, disabled, small = false 
         <div
             onClick={() => !disabled && onClick && onClick(tile)}
             className={`
-        relative ${baseWidth} ${baseHeight} rounded-md m-[2px] sm:m-1 cursor-pointer
-        transition-all duration-200 bg-[#0a0a0a] shadow-tile flex flex-col justify-between
+        relative ${baseWidth} ${baseHeight} shrink-0 rounded-md m-[2px] cursor-pointer
+        transition-all duration-200 bg-black shadow-tile flex flex-col justify-between
         border border-gray-700/50
         ${selected ? "ring-2 ring-casino-gold -translate-y-2 scale-105" : ""}
-        ${disabled ? "opacity-90 cursor-default" : "hover:-translate-y-1 hover:shadow-lg"}
+        ${disabled ? "opacity-20 cursor-default" : "hover:-translate-y-1 hover:shadow-[0_10px_15px_-3px_rgba(0,0,0,0.8)]"}
       `}
         >
             {/* 骨牌表面的高光反射層 */}
