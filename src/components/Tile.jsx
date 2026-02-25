@@ -12,12 +12,21 @@ const renderDots = (num, isTop) => {
         case 1:
             return <div className={`${dotClass} dot-center`}></div>;
         case 2:
-            return (
-                <>
-                    <div className={`${dotClass} dot-top-left`}></div>
-                    <div className={`${dotClass} dot-bottom-right`}></div>
-                </>
-            );
+            if (isTop) {
+                return (
+                    <>
+                        <div className={`${dotClass} dot-top-left`}></div>
+                        <div className={`${dotClass} dot-top-right`}></div>
+                    </>
+                );
+            } else {
+                return (
+                    <>
+                        <div className={`${dotClass} dot-bottom-left`}></div>
+                        <div className={`${dotClass} dot-bottom-right`}></div>
+                    </>
+                );
+            }
         case 3:
             return (
                 <>
