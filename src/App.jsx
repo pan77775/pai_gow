@@ -182,37 +182,37 @@ function App() {
                 <table className="w-full min-w-[340px] border-collapse text-xs sm:text-sm">
                   <thead className="bg-[#4aa5d4] text-white font-bold text-base border-b-2 border-black">
                     <tr>
-                      <th className="p-2 border-r border-black/30 w-[180px]">Play</th>
-                      <th className="p-2 border-r border-black/30">Win</th>
-                      <th className="p-2 border-r border-black/30">Push</th>
-                      <th className="p-2 border-r border-black/30">Lose</th>
-                      <th className="p-2">Return</th>
+                      <th className="p-1 sm:p-2 border-r border-black/30">Play</th>
+                      <th className="p-1 sm:p-2 border-r border-black/30 px-1">Win</th>
+                      <th className="p-1 sm:p-2 border-r border-black/30 px-1">Push</th>
+                      <th className="p-1 sm:p-2 border-r border-black/30 px-1">Lose</th>
+                      <th className="p-1 sm:p-2">Return</th>
                     </tr>
                   </thead>
                   <tbody>
                     {suggestions.map((s, index) => (
                       <tr key={index} className={`border-b border-black/30 text-center font-mono ${index === 0 ? "bg-yellow-300 font-bold" : "bg-white"}`}>
-                        <td className="p-2 border-r border-black/30 flex items-center justify-center gap-1">
+                        <td className="p-1 sm:p-2 border-r border-black/30 flex items-center justify-center gap-1">
                           {/* 縮小的排法展示 */}
-                          <div className="flex flex-col gap-1 pr-2 border-r border-black/20">
+                          <div className="flex flex-col gap-[2px] pr-1 sm:pr-2 border-r border-black/20 pointer-events-none">
                             <div className="flex gap-[2px]">
                               {s.front.tiles.map(t => (
-                                <Tile key={`f-${t.id}`} tile={t} small disabled />
+                                <Tile key={`f-${t.id}`} tile={t} small />
                               ))}
                             </div>
                           </div>
-                          <div className="flex flex-col gap-1 pl-1">
+                          <div className="flex flex-col gap-[2px] pl-0 sm:pl-1 pointer-events-none">
                             <div className="flex gap-[2px]">
                               {s.rear.tiles.map(t => (
-                                <Tile key={`r-${t.id}`} tile={t} small disabled />
+                                <Tile key={`r-${t.id}`} tile={t} small />
                               ))}
                             </div>
                           </div>
                         </td>
-                        <td className="p-2 border-r border-black/30 font-bold bg-[#cdedd7]/50">{s.winRateStats.wins.toLocaleString()}</td>
-                        <td className="p-2 border-r border-black/30 text-gray-600">{s.winRateStats.ties.toLocaleString()}</td>
-                        <td className="p-2 border-r border-black/30 text-gray-500">{s.winRateStats.losses.toLocaleString()}</td>
-                        <td className="p-2 font-bold text-blue-800">{s.ev > 0 ? "+" : ""}{s.ev.toFixed(4)}</td>
+                        <td className="p-1 sm:p-2 border-r border-black/30 font-bold bg-[#cdedd7]/50 text-[10px] sm:text-xs lg:text-sm">{s.winRateStats.wins.toLocaleString()}</td>
+                        <td className="p-1 sm:p-2 border-r border-black/30 text-gray-600 text-[10px] sm:text-xs lg:text-sm">{s.winRateStats.ties.toLocaleString()}</td>
+                        <td className="p-1 sm:p-2 border-r border-black/30 text-gray-500 text-[10px] sm:text-xs lg:text-sm">{s.winRateStats.losses.toLocaleString()}</td>
+                        <td className="p-1 sm:p-2 font-bold text-blue-800 text-[10px] sm:text-xs lg:text-sm">{s.ev > 0 ? "+" : ""}{s.ev.toFixed(4)}</td>
                       </tr>
                     ))}
                   </tbody>
