@@ -100,18 +100,19 @@ function App() {
             <h2 className="text-lg lg:text-2xl w-full sm:w-[280px] text-center xl:text-right text-white drop-shadow-[1px_2px_3px_rgba(0,0,0,0.8)] font-medium tracking-wide mt-0 sm:mt-2">
               Tiles in discard pile:
             </h2>
-            <div className="flex flex-wrap max-w-[320px] lg:max-w-[480px] gap-1 bg-black/10 p-2 rounded-lg border border-black/20 min-h-[50px] lg:min-h-[115px] justify-center lg:justify-start mx-auto xl:mx-0">
+            <div className="grid grid-cols-8 gap-[2px] bg-black/10 p-2 lg:p-3 rounded-lg border border-black/20 w-max mx-auto xl:mx-0 shadow-inner">
               {discardPile.map(tile => (
                 <Tile key={`d-${tile.id}`} tile={tile} onClick={() => handleTileClick(tile, 'discard')} />
               ))}
-              {discardPile.length < 16 && (
+              {Array.from({ length: Math.max(0, 16 - discardPile.length) }).map((_, i) => (
                 <div
-                  className="w-[35px] h-[66.5px] lg:w-[50px] lg:h-[95px] rounded-md border-2 border-dashed border-white/20 hover:bg-black/20 m-[1px] sm:m-[2px] flex items-center justify-center text-white/30 text-xs cursor-pointer shadow-inner transition-colors"
+                  key={`empty-d-${i}`}
+                  className="w-[35px] h-[66.5px] lg:w-[50px] lg:h-[95px] rounded-md border-2 border-dashed border-white/20 hover:bg-black/20 m-[1px] sm:m-[2px] flex items-center justify-center text-white/30 text-[10px] lg:text-xs cursor-pointer shadow-inner transition-colors"
                   onClick={() => alert("從上方未分配區點擊加入")}
                 >
                   空位
                 </div>
-              )}
+              ))}
             </div>
           </div>
 
