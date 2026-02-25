@@ -6,6 +6,7 @@ function App() {
   const [playerHand, setPlayerHand] = useState([]);
   const [discardPile, setDiscardPile] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
+  const [targetArea, setTargetArea] = useState('player'); // 'player' | 'discard'
 
   // 未分配的牌
   const unallocatedTiles = TILES.filter(
@@ -16,13 +17,20 @@ function App() {
     setSuggestions([]); // 任何變動都清除建議
 
     if (source === 'unallocated') {
-      if (playerHand.length < 4) {
-        setPlayerHand([...playerHand, tile]);
-      } else if (discardPile.length < 16) {
-        setDiscardPile([...discardPile, tile]);
+      if (targetArea === 'player') {
+        if (playerHand.length < 4) {
+          setPlayerHand([...playerHand, tile]);
+        } else {
+          // 若手牌已滿 4 張，自動切換到棄牌堆繼續選
+          setTargetArea('discard');
+          if (discardPile.length < 16) setDiscardPile([...discardPile, tile]);
+        }
+      } else if (targetArea === 'discard') {
+        if (discardPile.length < 16) setDiscardPile([...discardPile, tile]);
       }
     } else if (source === 'player') {
       setPlayerHand(playerHand.filter(t => t.id !== tile.id));
+      setTargetArea('player'); // 點手牌拿掉時，自動切回選手牌模式
     } else if (source === 'discard') {
       setDiscardPile(discardPile.filter(t => t.id !== tile.id));
     }
@@ -82,33 +90,48 @@ function App() {
 
           {/* Tiles in your hand */}
           <div className="flex flex-col sm:flex-row items-center justify-between xl:justify-start gap-1 lg:gap-4 w-full">
-            <h2 className="text-lg lg:text-2xl w-full sm:w-[280px] text-center xl:text-right text-white drop-shadow-[1px_2px_3px_rgba(0,0,0,0.8)] font-medium tracking-wide">
+            <h2
+              className={`text-lg lg:text-2xl w-full sm:w-[280px] text-center xl:text-right drop-shadow-[1px_2px_3px_rgba(0,0,0,0.8)] font-medium tracking-wide cursor-pointer transition-colors ${targetArea === 'player' ? 'text-casino-gold font-bold' : 'text-white hover:text-white/80'}`}
+              onClick={() => setTargetArea('player')}
+            >
               Tiles in your hand:
             </h2>
-            <div className="flex gap-1 bg-black/10 p-2 rounded-lg border border-transparent min-w-[170px] lg:min-w-[240px] justify-center">
+            <div
+              className={`flex gap-1 bg-black/10 p-2 rounded-lg border min-w-[170px] lg:min-w-[240px] justify-center cursor-pointer transition-all ${targetArea === 'player' ? 'border-casino-gold shadow-[0_0_15px_rgba(212,175,55,0.4)] bg-black/30' : 'border-transparent hover:border-white/20'}`}
+              onClick={() => setTargetArea('player')}
+            >
               {playerHand.map(tile => (
-                <Tile key={`p-${tile.id}`} tile={tile} onClick={() => handleTileClick(tile, 'player')} />
+                <Tile key={`p-${tile.id}`} tile={tile} onClick={(e) => { e.stopPropagation(); handleTileClick(tile, 'player'); }} />
               ))}
               {Array.from({ length: Math.max(0, 4 - playerHand.length) }).map((_, i) => (
-                <Tile key={`empty-p-${i}`} tile={null} />
+                <div key={`empty-p-${i}`} className="w-[35px] h-[66.5px] lg:w-[50px] lg:h-[95px] m-[1px] sm:m-[2px] opacity-0" /> // 佔位以防點擊穿透 Tile.jsx 的 empty state
               ))}
+              {/* Overlay 裝飾：避免因為只有四張牌點不到外框，讓整個 div 底色可見，並利用絕對定位覆蓋處理點擊 */}
+              {playerHand.length < 4 && (
+                <div className="absolute inset-0 pointer-events-none" />
+              )}
             </div>
           </div>
 
           {/* Discards / Dealer */}
           <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between xl:justify-start gap-1 lg:gap-4 mt-1 lg:mt-2 w-full">
-            <h2 className="text-lg lg:text-2xl w-full sm:w-[280px] text-center xl:text-right text-white drop-shadow-[1px_2px_3px_rgba(0,0,0,0.8)] font-medium tracking-wide mt-0 sm:mt-2">
+            <h2
+              className={`text-lg lg:text-2xl w-full sm:w-[280px] text-center xl:text-right drop-shadow-[1px_2px_3px_rgba(0,0,0,0.8)] font-medium tracking-wide mt-0 sm:mt-2 cursor-pointer transition-colors ${targetArea === 'discard' ? 'text-casino-gold font-bold' : 'text-white hover:text-white/80'}`}
+              onClick={() => setTargetArea('discard')}
+            >
               Tiles in discard pile:
             </h2>
-            <div className="grid grid-cols-8 gap-[2px] bg-black/10 p-2 lg:p-3 rounded-lg border border-black/20 w-max mx-auto xl:mx-0 shadow-inner">
+            <div
+              className={`grid grid-cols-8 gap-[2px] bg-black/10 p-2 lg:p-3 rounded-lg border w-max mx-auto xl:mx-0 transition-all cursor-pointer ${targetArea === 'discard' ? 'border-casino-gold shadow-[0_0_15px_rgba(212,175,55,0.4)] bg-black/30' : 'border-black/20 hover:border-white/20 shadow-inner'}`}
+              onClick={() => setTargetArea('discard')}
+            >
               {discardPile.map(tile => (
-                <Tile key={`d-${tile.id}`} tile={tile} onClick={() => handleTileClick(tile, 'discard')} />
+                <Tile key={`d-${tile.id}`} tile={tile} onClick={(e) => { e.stopPropagation(); handleTileClick(tile, 'discard'); }} />
               ))}
               {Array.from({ length: Math.max(0, 16 - discardPile.length) }).map((_, i) => (
                 <div
                   key={`empty-d-${i}`}
-                  className="w-[35px] h-[66.5px] lg:w-[50px] lg:h-[95px] rounded-md border-2 border-dashed border-white/20 hover:bg-black/20 m-[1px] sm:m-[2px] flex items-center justify-center text-white/30 text-[10px] lg:text-xs cursor-pointer shadow-inner transition-colors"
-                  onClick={() => alert("從上方未分配區點擊加入")}
+                  className="w-[35px] h-[66.5px] lg:w-[50px] lg:h-[95px] rounded-md border-2 border-dashed border-white/20 m-[1px] sm:m-[2px] flex items-center justify-center text-white/30 text-[10px] lg:text-xs shadow-inner transition-colors pointer-events-none"
                 >
                   空位
                 </div>
