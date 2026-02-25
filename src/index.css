@@ -65,6 +65,10 @@ body {
 .dots-1 .dot-center {
   grid-column: 2;
   grid-row: 2;
+}
+
+/* 特別大的點 (例如：地牌的紅心 1 點) */
+.dot-large {
   width: 12px;
   height: 12px;
 }

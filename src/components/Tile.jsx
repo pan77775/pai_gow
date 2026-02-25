@@ -10,14 +10,25 @@ const renderDots = (tile, num, isTop) => {
 
     switch (num) {
         case 1:
-            return <div className={`${dotClass} dot-center`}></div>;
+            // 只有「地牌」的紅心是放大尺寸，其他牌的 1 點維持正常大小
+            const isDi = (tile.name === '地');
+            return <div className={`${dotClass} dot-center ${isDi ? 'dot-large' : ''}`}></div>;
         case 2:
-            return (
-                <>
-                    <div className={`${dotClass} dot-mid-left`}></div>
-                    <div className={`${dotClass} dot-mid-right`}></div>
-                </>
-            );
+            if (isTop) {
+                return (
+                    <>
+                        <div className={`${dotClass} dot-top-left`}></div>
+                        <div className={`${dotClass} dot-top-right`}></div>
+                    </>
+                );
+            } else {
+                return (
+                    <>
+                        <div className={`${dotClass} dot-bottom-left`}></div>
+                        <div className={`${dotClass} dot-bottom-right`}></div>
+                    </>
+                );
+            }
         case 3:
             return (
                 <>
