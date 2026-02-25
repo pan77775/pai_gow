@@ -1,7 +1,7 @@
 import React from "react";
 
 // Helper function to render dots based on number and red/white rules
-const renderDots = (num, isTop) => {
+const renderDots = (tile, num, isTop) => {
     // 依據天九牌規則決定紅色點：
     // 1點、4點 為全紅。
     // 其餘(2,3,5,6) 預設為全白。
@@ -12,21 +12,12 @@ const renderDots = (num, isTop) => {
         case 1:
             return <div className={`${dotClass} dot-center`}></div>;
         case 2:
-            if (isTop) {
-                return (
-                    <>
-                        <div className={`${dotClass} dot-top-left`}></div>
-                        <div className={`${dotClass} dot-top-right`}></div>
-                    </>
-                );
-            } else {
-                return (
-                    <>
-                        <div className={`${dotClass} dot-bottom-left`}></div>
-                        <div className={`${dotClass} dot-bottom-right`}></div>
-                    </>
-                );
-            }
+            return (
+                <>
+                    <div className={`${dotClass} dot-mid-left`}></div>
+                    <div className={`${dotClass} dot-mid-right`}></div>
+                </>
+            );
         case 3:
             return (
                 <>
@@ -55,9 +46,25 @@ const renderDots = (num, isTop) => {
                 </>
             );
         case 6:
-            // 6點 特殊紅：如果是"猴"([1,2]或[2,4]的變體沒有6)；正常的6點一半紅一半白？
-            // 傳統天九的6點(如天、長六)是全白的。如果是"短六"[1,5]，5全白、1為紅。
-            // 為了簡化與對齊 Wizard 圖片：6點全白。8點(人[4,4])則是全紅。這裡我們保持除了1和4全紅外其他全白。
+            // 天牌[6,6] 的特別規則：
+            // 上方 6 點: 左三顆紅點、右三顆白點。下方 6 點: 左三面白點、右三顆紅點。
+            if (tile.name === '天') {
+                const redLeft = isTop;
+                const leftClass = `dot ${redLeft ? 'dot-red' : ''}`;
+                const rightClass = `dot ${redLeft ? '' : 'dot-red'}`;
+                return (
+                    <>
+                        <div className={`${leftClass} dot-top-left`}></div>
+                        <div className={`${leftClass} dot-mid-left`}></div>
+                        <div className={`${leftClass} dot-bottom-left`}></div>
+                        <div className={`${rightClass} dot-top-right`}></div>
+                        <div className={`${rightClass} dot-mid-right`}></div>
+                        <div className={`${rightClass} dot-bottom-right`}></div>
+                    </>
+                );
+            }
+
+            // 一般的 6 點全白 (例如 短六 等牌)
             return (
                 <>
                     <div className={`${dotClass} dot-top-left`}></div>
@@ -102,7 +109,7 @@ export default function Tile({ tile, onClick, selected, disabled, small = false 
 
             {/* 上半部點數 */}
             <div className={`dice-face dots-${tile.face[0]} flex-1 ${dotScale} origin-top`}>
-                {renderDots(tile.face[0], true)}
+                {renderDots(tile, tile.face[0], true)}
             </div>
 
             {/* 中間的白色分隔線 (骨牌特徵) */}
@@ -110,7 +117,7 @@ export default function Tile({ tile, onClick, selected, disabled, small = false 
 
             {/* 下半部點數 */}
             <div className={`dice-face dots-${tile.face[1]} flex-1 ${dotScale} origin-bottom`}>
-                {renderDots(tile.face[1], false)}
+                {renderDots(tile, tile.face[1], false)}
             </div>
         </div>
     );

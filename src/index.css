@@ -70,24 +70,14 @@ body {
 }
 
 /* 2點：依照水平靠邊排列 (天九牌特徵) */
-.dots-2 .dot-top-left {
+.dots-2 .dot-mid-left {
   grid-column: 1;
-  grid-row: 1;
+  grid-row: 2;
 }
 
-.dots-2 .dot-top-right {
+.dots-2 .dot-mid-right {
   grid-column: 3;
-  grid-row: 1;
-}
-
-.dots-2 .dot-bottom-left {
-  grid-column: 1;
-  grid-row: 3;
-}
-
-.dots-2 .dot-bottom-right {
-  grid-column: 3;
-  grid-row: 3;
+  grid-row: 2;
 }
 
 /* 3點：對角線+中央 */
