@@ -59,7 +59,8 @@ function App() {
       </h1>
 
       <div className="mb-8 md:mb-10 w-full flex justify-center overflow-x-auto pb-4">
-        <div className="grid grid-cols-[repeat(16,minmax(0,1fr))] gap-[2px] max-w-fit bg-black/20 p-2 rounded-lg border border-black/40 shadow-inner">
+        {/* 手機版 (小於 md): 8 欄自動折 4 列，中大螢幕: 16 欄 2 列 */}
+        <div className="grid grid-cols-8 md:grid-cols-[repeat(16,minmax(0,1fr))] gap-[2px] max-w-fit bg-black/20 p-2 rounded-lg border border-black/40 shadow-inner mx-auto">
           {TILES.map((tile) => {
             const isUsed = playerHand.some(p => p.id === tile.id) || discardPile.some(d => d.id === tile.id);
             return (
