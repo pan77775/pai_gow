@@ -93,8 +93,10 @@ const renderDots = (tile, num, isTop) => {
 
 export default function Tile({ tile, onClick, selected, disabled, small = false }) {
     // 為了適應右側表格的縮小版 (small = true) 以及手機版的自適應縮小 (small = false)
+    // 原始比例為 50 : 95 (即 1 : 1.9)
+    // 手機板使用 36px 寬度，因此高度應為 36 * 1.9 = 68.4px，取 68px。
     const baseWidth = small ? "w-[24px]" : "w-[36px] sm:w-[50px]";
-    const baseHeight = small ? "h-[45px]" : "h-[70px] sm:h-[95px]";
+    const baseHeight = small ? "h-[45px]" : "h-[68px] sm:h-[95px]";
     // small 的縮放不考慮響應式，一般情況則在小螢幕時自動使用 scale 縮小點的大小
     const dotScale = small ? "scale-[0.45]" : "scale-[0.7] sm:scale-100";
 
