@@ -63,8 +63,7 @@ function App() {
     <div className="h-[100dvh] w-full overflow-hidden bg-[#5b896b] py-2 lg:py-4 px-2 lg:px-6 flex flex-col font-sans text-white relative flex-1">
       {/* 頂部全區未分配牌，兩排陳列 */}
       <h1 className="text-base sm:text-2xl font-bold mb-2 lg:mb-4 mt-1 lg:mt-2 text-white/80 drop-shadow flex flex-col sm:flex-row items-center gap-1 sm:gap-4 text-center sm:text-left shrink-0">
-        天九牌 GTO 分析系統
-        <span className="text-[10px] sm:text-xs font-normal text-white/50 bg-black/30 px-2 py-1 rounded">※ 點擊牌將其移入手牌 / 棄牌堆</span>
+        Pai Gow GTO Analyzer
       </h1>
 
       <div className="mb-2 lg:mb-10 w-full flex justify-center shrink-0">
