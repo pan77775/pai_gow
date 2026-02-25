@@ -51,16 +51,17 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen py-6 px-4 md:px-10 flex flex-col font-sans text-white">
+    // 使用 overflow-hidden 結合 h-screen 確保手機版不會出現討厭的捲動條
+    <div className="h-screen w-full overflow-hidden bg-[#5b896b] py-2 sm:py-6 px-2 md:px-10 flex flex-col font-sans text-white relative flex-1">
       {/* 頂部全區未分配牌，兩排陳列 */}
-      <h1 className="text-xl md:text-2xl font-bold mb-4 text-white/80 drop-shadow flex flex-col sm:flex-row items-center gap-2 md:gap-4 text-center sm:text-left">
+      <h1 className="text-lg md:text-2xl font-bold mb-2 text-white/80 drop-shadow flex flex-col sm:flex-row items-center gap-1 md:gap-4 text-center sm:text-left shrink-0">
         天九牌 GTO 分析系統
-        <span className="text-xs font-normal text-white/50 bg-black/30 px-2 py-1 rounded">※ 點擊牌將其移入手牌 / 棄牌堆</span>
+        <span className="text-[10px] sm:text-xs font-normal text-white/50 bg-black/30 px-2 py-1 rounded">※ 點擊牌將其移入手牌 / 棄牌堆</span>
       </h1>
 
-      <div className="mb-4 sm:mb-8 md:mb-10 w-full flex justify-center overflow-x-auto pb-4">
-        {/* 手機版 (小於 md): 8 欄自動折 4 列，加大 gap 分散牌距，並使用 min-w-max 避免被擠壓，最後以 scale 縮小 */}
-        <div className="grid grid-cols-8 md:grid-cols-[repeat(16,minmax(0,1fr))] gap-2 sm:gap-3 md:gap-[2px] min-w-max max-w-fit bg-black/20 p-2 sm:p-3 md:p-2 rounded-lg border border-black/40 shadow-inner mx-auto transform scale-[0.82] sm:scale-[0.9] md:scale-100 origin-top">
+      <div className="mb-2 sm:mb-8 md:mb-10 w-full flex justify-center shrink-0">
+        {/* 手機版 (小於 md): 8 欄自動折 4 列，並使用 min-w-max 避免被擠壓，最後以極限 scale (如 0.6) 縮小保證塞進畫面 */}
+        <div className="grid grid-cols-8 md:grid-cols-[repeat(16,minmax(0,1fr))] gap-2 sm:gap-3 md:gap-[2px] min-w-max max-w-fit bg-black/20 p-2 sm:p-3 md:p-2 rounded-lg border border-black/40 shadow-inner mx-auto transform scale-[0.62] sm:scale-[0.8] md:scale-100 origin-top">
           {TILES.map((tile) => {
             const isUsed = playerHand.some(p => p.id === tile.id) || discardPile.some(d => d.id === tile.id);
             return (
@@ -115,77 +116,89 @@ function App() {
           </div>
 
           {/* 控制按鈕區 */}
-          <div className="flex flex-wrap gap-4 mt-4 sm:mt-6 justify-center xl:justify-start sm:ml-[296px]">
+          <div className="flex flex-wrap gap-2 sm:gap-4 mt-2 sm:mt-6 justify-center xl:justify-start sm:ml-[296px]">
             <button
               onClick={reset}
-              className="px-4 sm:px-6 py-2 bg-[#d8d8d8] text-black font-bold text-base sm:text-lg rounded shadow-3d-btn active:shadow-3d-btn-pressed hover:bg-white transition-all transform active:translate-y-1"
+              className="px-4 sm:px-6 py-2 bg-[#d8d8d8] text-black font-bold text-sm sm:text-lg rounded shadow-3d-btn active:shadow-3d-btn-pressed hover:bg-white transition-all transform active:translate-y-1"
             >
               Reset
             </button>
             <button
               onClick={randomHand}
-              className="px-4 sm:px-6 py-2 bg-[#d8d8d8] text-black font-bold text-base sm:text-lg rounded shadow-3d-btn active:shadow-3d-btn-pressed hover:bg-white transition-all transform active:translate-y-1"
+              className="px-4 sm:px-6 py-2 bg-[#d8d8d8] text-black font-bold text-sm sm:text-lg rounded shadow-3d-btn active:shadow-3d-btn-pressed hover:bg-white transition-all transform active:translate-y-1"
             >
               Random Hand
             </button>
             <button
               onClick={analyze}
-              className="px-4 sm:px-6 py-2 bg-[#d8d8d8] text-black font-bold text-base sm:text-lg rounded shadow-3d-btn active:shadow-3d-btn-pressed hover:bg-white transition-all transform active:translate-y-1 sm:ml-4 w-full sm:w-auto mt-2 sm:mt-0"
+              className="px-4 sm:px-6 py-2 bg-[#d8d8d8] text-black font-bold text-sm sm:text-lg rounded shadow-3d-btn active:shadow-3d-btn-pressed hover:bg-white transition-all transform active:translate-y-1 sm:ml-4 w-full sm:w-auto mt-2 sm:mt-0"
             >
               Analyze
             </button>
           </div>
         </div>
 
-        {/* 右側分析結果表格區塊 */}
+        {/* 彈出式分析結果 Modal */}
         {suggestions.length > 0 && (
-          <div className="flex-1 w-full bg-white text-black shadow-2xl overflow-x-auto rounded-sm border-2 border-black max-w-[600px] self-center xl:self-start mt-8 xl:mt-0">
-            <table className="w-full min-w-[340px] border-collapse text-xs sm:text-sm">
-              <thead className="bg-[#4aa5d4] text-white font-bold text-base border-b-2 border-black">
-                <tr>
-                  <th className="p-2 border-r border-black/30 w-[180px]">Play</th>
-                  <th className="p-2 border-r border-black/30">Win</th>
-                  <th className="p-2 border-r border-black/30">Push</th>
-                  <th className="p-2 border-r border-black/30">Lose</th>
-                  <th className="p-2">Return</th>
-                </tr>
-              </thead>
-              <tbody>
-                {suggestions.map((s, index) => (
-                  <tr key={index} className={`border-b border-black/30 text-center font-mono ${index === 0 ? "bg-yellow-300 font-bold" : "bg-white"}`}>
-                    <td className="p-2 border-r border-black/30 flex items-center justify-center gap-1">
-                      {/* 縮小的排法展示 */}
-                      <div className="flex flex-col gap-1 pr-2 border-r border-black/20">
-                        <div className="flex gap-[2px]">
-                          {s.front.tiles.map(t => (
-                            <Tile key={`f-${t.id}`} tile={t} small disabled />
-                          ))}
-                        </div>
-                      </div>
-                      <div className="flex flex-col gap-1 pl-1">
-                        <div className="flex gap-[2px]">
-                          {s.rear.tiles.map(t => (
-                            <Tile key={`r-${t.id}`} tile={t} small disabled />
-                          ))}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="p-2 border-r border-black/30 text-right pr-4">
-                      {s.winRateStats.wins.toLocaleString()}
-                    </td>
-                    <td className="p-2 border-r border-black/30 text-right pr-4">
-                      {s.winRateStats.ties.toLocaleString()}
-                    </td>
-                    <td className="p-2 border-r border-black/30 text-right pr-4">
-                      {s.winRateStats.losses.toLocaleString()}
-                    </td>
-                    <td className="p-2 text-right pr-4 tracking-wide font-bold">
-                      {s.ev > 0 ? "+" : ""}{s.ev.toFixed(6)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm">
+            <div className="bg-white text-black shadow-2xl rounded-lg border-2 border-black max-w-[600px] w-full max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
+              {/* Modal 標題與關閉按鈕 */}
+              <div className="bg-[#1b3a26] text-white p-3 flex justify-between items-center border-b-2 border-black">
+                <h3 className="font-bold text-lg drop-shadow">Analysis Results</h3>
+                <button
+                  onClick={() => setSuggestions([])}
+                  className="bg-red-500 hover:bg-red-600 text-white font-bold h-8 w-8 rounded flex items-center justify-center shadow-inner"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* 表格內容區塊，允許內部滾動避免超過螢幕 */}
+              <div className="overflow-auto w-full">
+                <table className="w-full min-w-[340px] border-collapse text-xs sm:text-sm">
+                  <thead className="bg-[#4aa5d4] text-white font-bold text-base border-b-2 border-black">
+                    <tr>
+                      <th className="p-2 border-r border-black/30 w-[180px]">Play</th>
+                      <th className="p-2 border-r border-black/30">Win</th>
+                      <th className="p-2 border-r border-black/30">Push</th>
+                      <th className="p-2 border-r border-black/30">Lose</th>
+                      <th className="p-2">Return</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {suggestions.map((s, index) => (
+                      <tr key={index} className={`border-b border-black/30 text-center font-mono ${index === 0 ? "bg-yellow-300 font-bold" : "bg-white"}`}>
+                        <td className="p-2 border-r border-black/30 flex items-center justify-center gap-1">
+                          {/* 縮小的排法展示 */}
+                          <div className="flex flex-col gap-1 pr-2 border-r border-black/20">
+                            <div className="flex gap-[2px]">
+                              {s.front.tiles.map(t => (
+                                <Tile key={`f-${t.id}`} tile={t} small disabled />
+                              ))}
+                            </div>
+                          </div>
+                          <div className="flex flex-col gap-1 pl-1">
+                            <div className="flex gap-[2px]">
+                              {s.rear.tiles.map(t => (
+                                <Tile key={`r-${t.id}`} tile={t} small disabled />
+                              ))}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="p-2 border-r border-black/30 font-bold bg-[#cdedd7]/50">{s.winRateStats.wins.toLocaleString()}</td>
+                        <td className="p-2 border-r border-black/30 text-gray-600">{s.winRateStats.ties.toLocaleString()}</td>
+                        <td className="p-2 border-r border-black/30 text-gray-500">{s.winRateStats.losses.toLocaleString()}</td>
+                        <td className="p-2 font-bold text-blue-800">{s.ev > 0 ? "+" : ""}{s.ev.toFixed(4)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="p-3 bg-gray-100 border-t border-black/20 text-xs text-right text-gray-600">
+                * Highlighted row represents the GTO (highest EV) strategy
+              </div>
+            </div>
           </div>
         )}
       </div>
