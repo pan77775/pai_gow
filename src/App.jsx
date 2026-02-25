@@ -87,28 +87,44 @@ function App() {
         {/* 左側與中間區塊 (標題與 Tiles) */}
         <div className="flex flex-col gap-2 lg:gap-6 w-full max-w-[600px] xl:w-auto items-center xl:items-start">
 
-          {/* Tiles in your hand */}
-          <div className="flex flex-col sm:flex-row items-center justify-between xl:justify-start gap-1 lg:gap-4 w-full">
+          {/* 手牌與控制按鈕區：手牌靠左，按鈕縮小靠右 */}
+          <div className="flex flex-col xl:flex-row items-center justify-between xl:justify-start gap-1 lg:gap-4 w-full">
             <h2
               className={`text-lg lg:text-2xl w-full sm:w-[280px] text-center xl:text-right drop-shadow-[1px_2px_3px_rgba(0,0,0,0.8)] font-medium tracking-wide cursor-pointer transition-colors ${targetArea === 'player' ? 'text-casino-gold font-bold' : 'text-white hover:text-white/80'}`}
               onClick={() => setTargetArea('player')}
             >
               Tiles in your hand:
             </h2>
-            <div
-              className={`flex gap-1 bg-black/10 p-2 rounded-lg border min-w-[170px] lg:min-w-[240px] justify-center cursor-pointer transition-all ${targetArea === 'player' ? 'border-casino-gold shadow-[0_0_15px_rgba(212,175,55,0.4)] bg-black/30' : 'border-transparent hover:border-white/20'}`}
-              onClick={() => setTargetArea('player')}
-            >
-              {playerHand.map(tile => (
-                <Tile key={`p-${tile.id}`} tile={tile} onClick={() => handleTileClick(tile, 'player')} />
-              ))}
-              {Array.from({ length: Math.max(0, 4 - playerHand.length) }).map((_, i) => (
-                <div key={`empty-p-${i}`} className="w-[35px] h-[66.5px] lg:w-[50px] lg:h-[95px] m-[1px] sm:m-[2px] opacity-0" /> // 佔位以防點擊穿透 Tile.jsx 的 empty state
-              ))}
-              {/* Overlay 裝飾：避免因為只有四張牌點不到外框，讓整個 div 底色可見，並利用絕對定位覆蓋處理點擊 */}
-              {playerHand.length < 4 && (
-                <div className="absolute inset-0 pointer-events-none" />
-              )}
+
+            <div className="flex flex-row items-center gap-2 sm:gap-4 w-full sm:w-auto justify-center xl:justify-start">
+              {/* 手牌區 */}
+              <div
+                className={`flex gap-1 bg-black/10 p-1 sm:p-2 rounded-lg border min-w-[155px] lg:min-w-[240px] justify-center cursor-pointer transition-all ${targetArea === 'player' ? 'border-casino-gold shadow-[0_0_15px_rgba(212,175,55,0.4)] bg-black/30' : 'border-transparent hover:border-white/20'}`}
+                onClick={() => setTargetArea('player')}
+              >
+                {playerHand.map(tile => (
+                  <Tile key={`p-${tile.id}`} tile={tile} onClick={() => handleTileClick(tile, 'player')} />
+                ))}
+                {Array.from({ length: Math.max(0, 4 - playerHand.length) }).map((_, i) => (
+                  <div key={`empty-p-${i}`} className="w-[35px] h-[66.5px] lg:w-[50px] lg:h-[95px] m-[1px] sm:m-[2px] opacity-0" />
+                ))}
+                {playerHand.length < 4 && <div className="absolute inset-0 pointer-events-none" />}
+              </div>
+
+              {/* 緊湊精緻的按鈕區 (排在手牌右側) */}
+              <div className="flex flex-col gap-1 sm:gap-2 shrink-0">
+                <div className="flex flex-row gap-1 sm:gap-2">
+                  <button onClick={reset} className="px-2 sm:px-4 py-1 sm:py-2 bg-[#d8d8d8] text-black font-bold text-[10px] sm:text-base rounded shadow-3d-btn active:shadow-3d-btn-pressed hover:bg-white transition-transform active:translate-y-[1px]">
+                    Reset
+                  </button>
+                  <button onClick={randomHand} className="px-2 sm:px-4 py-1 sm:py-2 bg-[#d8d8d8] text-black font-bold text-[10px] sm:text-base rounded shadow-3d-btn active:shadow-3d-btn-pressed hover:bg-white transition-transform active:translate-y-[1px]">
+                    Random
+                  </button>
+                </div>
+                <button onClick={analyze} className="px-2 sm:px-4 py-1 sm:py-2 bg-yellow-400 text-black font-bold text-[12px] sm:text-lg rounded shadow-3d-btn active:shadow-3d-btn-pressed hover:bg-yellow-300 transition-transform active:translate-y-[1px] w-full">
+                  Analyze
+                </button>
+              </div>
             </div>
           </div>
 
@@ -138,27 +154,7 @@ function App() {
             </div>
           </div>
 
-          {/* 控制按鈕區 */}
-          <div className="flex flex-wrap gap-2 lg:gap-4 mt-2 lg:mt-6 justify-center xl:justify-start xl:ml-[296px]">
-            <button
-              onClick={reset}
-              className="px-4 sm:px-6 py-2 bg-[#d8d8d8] text-black font-bold text-sm lg:text-lg rounded shadow-3d-btn active:shadow-3d-btn-pressed hover:bg-white transition-all transform active:translate-y-1"
-            >
-              Reset
-            </button>
-            <button
-              onClick={randomHand}
-              className="px-4 sm:px-6 py-2 bg-[#d8d8d8] text-black font-bold text-sm lg:text-lg rounded shadow-3d-btn active:shadow-3d-btn-pressed hover:bg-white transition-all transform active:translate-y-1"
-            >
-              Random Hand
-            </button>
-            <button
-              onClick={analyze}
-              className="px-4 sm:px-6 py-2 bg-[#d8d8d8] text-black font-bold text-sm lg:text-lg rounded shadow-3d-btn active:shadow-3d-btn-pressed hover:bg-white transition-all transform active:translate-y-1 sm:ml-4 w-full sm:w-auto mt-2 sm:mt-0"
-            >
-              Analyze
-            </button>
-          </div>
+          {/* (按鈕區已移至手牌右側，騰出底層空間) */}
         </div>
 
         {/* 彈出式分析結果 Modal */}
