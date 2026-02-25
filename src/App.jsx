@@ -101,7 +101,7 @@ function App() {
               onClick={() => setTargetArea('player')}
             >
               {playerHand.map(tile => (
-                <Tile key={`p-${tile.id}`} tile={tile} onClick={(e) => { e.stopPropagation(); handleTileClick(tile, 'player'); }} />
+                <Tile key={`p-${tile.id}`} tile={tile} onClick={() => handleTileClick(tile, 'player')} />
               ))}
               {Array.from({ length: Math.max(0, 4 - playerHand.length) }).map((_, i) => (
                 <div key={`empty-p-${i}`} className="w-[35px] h-[66.5px] lg:w-[50px] lg:h-[95px] m-[1px] sm:m-[2px] opacity-0" /> // 佔位以防點擊穿透 Tile.jsx 的 empty state
@@ -126,7 +126,7 @@ function App() {
               onClick={() => setTargetArea('discard')}
             >
               {discardPile.map(tile => (
-                <Tile key={`d-${tile.id}`} tile={tile} onClick={(e) => { e.stopPropagation(); handleTileClick(tile, 'discard'); }} />
+                <Tile key={`d-${tile.id}`} tile={tile} onClick={() => handleTileClick(tile, 'discard')} />
               ))}
               {Array.from({ length: Math.max(0, 16 - discardPile.length) }).map((_, i) => (
                 <div
