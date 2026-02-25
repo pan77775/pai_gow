@@ -58,9 +58,9 @@ function App() {
         <span className="text-xs font-normal text-white/50 bg-black/30 px-2 py-1 rounded">※ 點擊牌將其移入手牌 / 棄牌堆</span>
       </h1>
 
-      <div className="mb-8 md:mb-10 w-full flex justify-center overflow-x-auto pb-4">
-        {/* 手機版 (小於 md): 8 欄自動折 4 列，並使用 scale 將整塊完美的 50x95 原版牌等比縮小以容納多數手機版面，中大螢幕: 16 欄 2 列 */}
-        <div className="grid grid-cols-8 md:grid-cols-[repeat(16,minmax(0,1fr))] gap-[2px] max-w-fit bg-black/20 p-2 rounded-lg border border-black/40 shadow-inner mx-auto transform scale-[0.75] sm:scale-[0.85] md:scale-100 origin-top">
+      <div className="mb-4 sm:mb-8 md:mb-10 w-full flex justify-center overflow-x-auto pb-4">
+        {/* 手機版 (小於 md): 8 欄自動折 4 列，加大 gap 分散牌距，並使用 scale 將整體等比微調以填滿大部分手機畫面 */}
+        <div className="grid grid-cols-8 md:grid-cols-[repeat(16,minmax(0,1fr))] gap-2 sm:gap-3 md:gap-[2px] max-w-fit bg-black/20 p-2 sm:p-3 md:p-2 rounded-lg border border-black/40 shadow-inner mx-auto transform scale-[0.8] sm:scale-[0.9] md:scale-100 origin-top">
           {TILES.map((tile) => {
             const isUsed = playerHand.some(p => p.id === tile.id) || discardPile.some(d => d.id === tile.id);
             return (
