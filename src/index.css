@@ -69,10 +69,20 @@ body {
   height: 12px;
 }
 
-/* 2點：對角線 */
+/* 2點：依照水平靠邊排列 (天九牌特徵) */
 .dots-2 .dot-top-left {
   grid-column: 1;
   grid-row: 1;
+}
+
+.dots-2 .dot-top-right {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.dots-2 .dot-bottom-left {
+  grid-column: 1;
+  grid-row: 3;
 }
 
 .dots-2 .dot-bottom-right {
