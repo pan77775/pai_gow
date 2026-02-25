@@ -51,17 +51,17 @@ function App() {
   };
 
   return (
-    // 使用 min-h-screen 與 overflow-y-auto 允許使用者由上向下滑動以檢視手牌與按鈕區
-    <div className="min-h-screen w-full overflow-y-auto overflow-x-hidden bg-[#5b896b] py-2 sm:py-6 px-2 md:px-10 flex flex-col font-sans text-white relative">
+    // 使用 100dvh 確保佔滿手機一頁，並鎖定 overflow-hidden 禁止滑動
+    <div className="h-[100dvh] w-full overflow-hidden bg-[#5b896b] py-2 lg:py-4 px-2 lg:px-6 flex flex-col font-sans text-white relative flex-1">
       {/* 頂部全區未分配牌，兩排陳列 */}
-      <h1 className="text-lg md:text-2xl font-bold mb-2 mt-2 text-white/80 drop-shadow flex flex-col sm:flex-row items-center gap-1 md:gap-4 text-center sm:text-left shrink-0">
+      <h1 className="text-base sm:text-2xl font-bold mb-2 lg:mb-4 mt-1 lg:mt-2 text-white/80 drop-shadow flex flex-col sm:flex-row items-center gap-1 sm:gap-4 text-center sm:text-left shrink-0">
         天九牌 GTO 分析系統
         <span className="text-[10px] sm:text-xs font-normal text-white/50 bg-black/30 px-2 py-1 rounded">※ 點擊牌將其移入手牌 / 棄牌堆</span>
       </h1>
 
-      <div className="mb-2 sm:mb-8 md:mb-10 w-full flex justify-center shrink-0">
-        {/* 手機版 (小於 md): 8 欄自動折 4 列，並使用 min-w-max 避免被擠壓，最後以極限 scale (如 0.6) 縮小保證塞進畫面 */}
-        <div className="grid grid-cols-8 md:grid-cols-[repeat(16,minmax(0,1fr))] gap-2 sm:gap-3 md:gap-[2px] min-w-max max-w-fit bg-black/20 p-2 sm:p-3 md:p-2 rounded-lg border border-black/40 shadow-inner mx-auto transform scale-[0.62] sm:scale-[0.8] md:scale-100 origin-top">
+      <div className="mb-2 lg:mb-10 w-full flex justify-center shrink-0">
+        {/* 手機版 (小於 lg): 8 欄自動折 4 列，不再需要 min-w-max 或外層縮放，因為 Tile 本身已經做了實質縮小 */}
+        <div className="grid grid-cols-8 lg:grid-cols-[repeat(16,minmax(0,1fr))] gap-[2px] bg-black/20 p-2 lg:p-3 rounded-lg border border-black/40 shadow-inner mx-auto">
           {TILES.map((tile) => {
             const isUsed = playerHand.some(p => p.id === tile.id) || discardPile.some(d => d.id === tile.id);
             return (
@@ -76,16 +76,16 @@ function App() {
         </div>
       </div>
 
-      <div className="flex gap-10 flex-col xl:flex-row w-full max-w-[1400px] justify-center items-center xl:items-start">
+      <div className="flex gap-2 lg:gap-10 flex-col xl:flex-row w-full max-w-[1400px] mx-auto justify-center items-center xl:items-start shrink-0 overflow-y-auto lg:overflow-visible pb-4">
         {/* 左側與中間區塊 (標題與 Tiles) */}
-        <div className="flex flex-col gap-6 w-full max-w-[600px] xl:w-auto">
+        <div className="flex flex-col gap-2 lg:gap-6 w-full max-w-[600px] xl:w-auto items-center xl:items-start">
 
           {/* Tiles in your hand */}
-          <div className="flex flex-col sm:flex-row items-center justify-between xl:justify-start gap-2 sm:gap-4">
-            <h2 className="text-xl sm:text-2xl w-full sm:w-[280px] text-center sm:text-right text-white drop-shadow-[1px_2px_3px_rgba(0,0,0,0.8)] font-medium tracking-wide">
+          <div className="flex flex-col sm:flex-row items-center justify-between xl:justify-start gap-1 lg:gap-4 w-full">
+            <h2 className="text-lg lg:text-2xl w-full sm:w-[280px] text-center xl:text-right text-white drop-shadow-[1px_2px_3px_rgba(0,0,0,0.8)] font-medium tracking-wide">
               Tiles in your hand:
             </h2>
-            <div className="flex gap-1 bg-black/10 p-2 rounded-lg border border-transparent min-w-[240px] justify-center">
+            <div className="flex gap-1 bg-black/10 p-2 rounded-lg border border-transparent min-w-[170px] lg:min-w-[240px] justify-center">
               {playerHand.map(tile => (
                 <Tile key={`p-${tile.id}`} tile={tile} onClick={() => handleTileClick(tile, 'player')} />
               ))}
@@ -96,17 +96,17 @@ function App() {
           </div>
 
           {/* Discards / Dealer */}
-          <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between xl:justify-start gap-2 sm:gap-4 mt-2">
-            <h2 className="text-xl sm:text-2xl w-full sm:w-[280px] text-center sm:text-right text-white drop-shadow-[1px_2px_3px_rgba(0,0,0,0.8)] font-medium tracking-wide mt-0 sm:mt-2">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between xl:justify-start gap-1 lg:gap-4 mt-1 lg:mt-2 w-full">
+            <h2 className="text-lg lg:text-2xl w-full sm:w-[280px] text-center xl:text-right text-white drop-shadow-[1px_2px_3px_rgba(0,0,0,0.8)] font-medium tracking-wide mt-0 sm:mt-2">
               Tiles in discard pile:
             </h2>
-            <div className="flex flex-wrap max-w-[480px] gap-1 bg-black/10 p-2 rounded-lg border border-black/20 min-h-[115px]">
+            <div className="flex flex-wrap max-w-[320px] lg:max-w-[480px] gap-1 bg-black/10 p-2 rounded-lg border border-black/20 min-h-[50px] lg:min-h-[115px] justify-center lg:justify-start mx-auto xl:mx-0">
               {discardPile.map(tile => (
                 <Tile key={`d-${tile.id}`} tile={tile} onClick={() => handleTileClick(tile, 'discard')} />
               ))}
               {discardPile.length < 16 && (
                 <div
-                  className="w-[50px] h-[95px] rounded-md border-2 border-dashed border-white/20 hover:bg-black/20 m-[2px] flex items-center justify-center text-white/30 text-xs cursor-pointer shadow-inner transition-colors"
+                  className="w-[35px] h-[66.5px] lg:w-[50px] lg:h-[95px] rounded-md border-2 border-dashed border-white/20 hover:bg-black/20 m-[1px] sm:m-[2px] flex items-center justify-center text-white/30 text-xs cursor-pointer shadow-inner transition-colors"
                   onClick={() => alert("從上方未分配區點擊加入")}
                 >
                   空位
@@ -116,22 +116,22 @@ function App() {
           </div>
 
           {/* 控制按鈕區 */}
-          <div className="flex flex-wrap gap-2 sm:gap-4 mt-2 sm:mt-6 justify-center xl:justify-start sm:ml-[296px]">
+          <div className="flex flex-wrap gap-2 lg:gap-4 mt-2 lg:mt-6 justify-center xl:justify-start xl:ml-[296px]">
             <button
               onClick={reset}
-              className="px-4 sm:px-6 py-2 bg-[#d8d8d8] text-black font-bold text-sm sm:text-lg rounded shadow-3d-btn active:shadow-3d-btn-pressed hover:bg-white transition-all transform active:translate-y-1"
+              className="px-4 sm:px-6 py-2 bg-[#d8d8d8] text-black font-bold text-sm lg:text-lg rounded shadow-3d-btn active:shadow-3d-btn-pressed hover:bg-white transition-all transform active:translate-y-1"
             >
               Reset
             </button>
             <button
               onClick={randomHand}
-              className="px-4 sm:px-6 py-2 bg-[#d8d8d8] text-black font-bold text-sm sm:text-lg rounded shadow-3d-btn active:shadow-3d-btn-pressed hover:bg-white transition-all transform active:translate-y-1"
+              className="px-4 sm:px-6 py-2 bg-[#d8d8d8] text-black font-bold text-sm lg:text-lg rounded shadow-3d-btn active:shadow-3d-btn-pressed hover:bg-white transition-all transform active:translate-y-1"
             >
               Random Hand
             </button>
             <button
               onClick={analyze}
-              className="px-4 sm:px-6 py-2 bg-[#d8d8d8] text-black font-bold text-sm sm:text-lg rounded shadow-3d-btn active:shadow-3d-btn-pressed hover:bg-white transition-all transform active:translate-y-1 sm:ml-4 w-full sm:w-auto mt-2 sm:mt-0"
+              className="px-4 sm:px-6 py-2 bg-[#d8d8d8] text-black font-bold text-sm lg:text-lg rounded shadow-3d-btn active:shadow-3d-btn-pressed hover:bg-white transition-all transform active:translate-y-1 sm:ml-4 w-full sm:w-auto mt-2 sm:mt-0"
             >
               Analyze
             </button>

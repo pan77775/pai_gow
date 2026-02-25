@@ -92,45 +92,56 @@ const renderDots = (tile, num, isTop) => {
 };
 
 export default function Tile({ tile, onClick, selected, disabled, small = false }) {
-    // 為了適應右側表格的縮小版 (small = true) 以及手機版的自適應縮小 (small = false)
-    // 為了適應右側表格的縮小版 (small = true) 
-    // 取消手機板的自適應變形，一律保持完美的 `50x95` 原比例，透過上層的橫向滑屏 `overflow-x-auto` 來解決。
-    const baseWidth = small ? "w-[24px]" : "w-[50px]";
-    const baseHeight = small ? "h-[45px]" : "h-[95px]";
-    const dotScale = small ? "scale-[0.45]" : "scale-100";
+    // 雙層 Responsive 架構：外層決定 Flex/Grid 佔據空間，內層負責原尺寸畫面等比縮放
+    // 原始 50x95 (1:1.9). 手機版採用 35x66.5 (scale: 0.7), small 版為 22.5x42.75 (scale: 0.45)
+    const outerWidth = small ? "w-[23px]" : "w-[35px] lg:w-[50px]";
+    const outerHeight = small ? "h-[43px]" : "h-[66.5px] lg:h-[95px]";
+    const innerScale = small ? "scale-[0.45]" : "scale-[0.7] lg:scale-100";
 
     if (!tile) {
         // 佔位符
         return (
-            <div className={`${baseWidth} ${baseHeight} shrink-0 rounded-md border border-white/10 bg-black shadow-tile flex items-center justify-center opacity-40 m-[2px]`}></div>
+            <div className={`${outerWidth} ${outerHeight} shrink-0 m-[1px] sm:m-[2px]`}>
+                <div className={`w-[50px] h-[95px] origin-top-left transform ${innerScale}`}>
+                    <div className="w-full h-full rounded-md border border-white/10 bg-black shadow-tile flex items-center justify-center opacity-40"></div>
+                </div>
+            </div>
         );
     }
 
     return (
         <div
+            className={`${outerWidth} ${outerHeight} shrink-0 m-[1px] sm:m-[2px] cursor-pointer`}
             onClick={() => !disabled && onClick && onClick(tile)}
-            className={`
-        relative ${baseWidth} ${baseHeight} shrink-0 rounded-md m-[2px] cursor-pointer
-        transition-all duration-200 bg-black shadow-tile flex flex-col justify-between
-        border border-gray-700/50
-        ${selected ? "ring-2 ring-casino-gold -translate-y-2 scale-105" : ""}
-        ${disabled ? "opacity-20 cursor-default" : "hover:-translate-y-1 hover:shadow-[0_10px_15px_-3px_rgba(0,0,0,0.8)]"}
-      `}
         >
-            {/* 骨牌表面的高光反射層 */}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none rounded-md z-10"></div>
+            {/* 靜態比例鎖定層 */}
+            <div className={`w-[50px] h-[95px] origin-top-left transform ${innerScale}`}>
+                {/* 狀態動畫與骨牌核心層 */}
+                <div
+                    className={`
+                        relative w-full h-full rounded-md
+                        transition-all duration-200 bg-black shadow-tile flex flex-col justify-between
+                        border border-gray-700/50
+                        ${selected ? "ring-2 ring-casino-gold -translate-y-2 scale-105" : ""}
+                        ${disabled ? "opacity-20 cursor-default" : "hover:-translate-y-1 hover:shadow-[0_10px_15px_-3px_rgba(0,0,0,0.8)]"}
+                    `}
+                >
+                    {/* 骨牌表面的高光反射層 */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none rounded-md z-10"></div>
 
-            {/* 上半部點數 */}
-            <div className={`dice-face dots-${tile.face[0]} flex-1 ${dotScale} origin-top`}>
-                {renderDots(tile, tile.face[0], true)}
-            </div>
+                    {/* 上半部點數 (不再需要動態 scale，因為已被外層統包縮放) */}
+                    <div className={`dice-face dots-${tile.face[0]} flex-1 origin-top`}>
+                        {renderDots(tile, tile.face[0], true)}
+                    </div>
 
-            {/* 中間的白色分隔線 (骨牌特徵) */}
-            <div className="w-[80%] h-px bg-gray-600/60 mx-auto z-0 shadow-[0_1px_1px_rgba(0,0,0,0.8)]"></div>
+                    {/* 中間的白色分隔線 (骨牌特徵) */}
+                    <div className="w-[80%] h-px bg-gray-600/60 mx-auto z-0 shadow-[0_1px_1px_rgba(0,0,0,0.8)]"></div>
 
-            {/* 下半部點數 */}
-            <div className={`dice-face dots-${tile.face[1]} flex-1 ${dotScale} origin-bottom`}>
-                {renderDots(tile, tile.face[1], false)}
+                    {/* 下半部點數 */}
+                    <div className={`dice-face dots-${tile.face[1]} flex-1 origin-bottom`}>
+                        {renderDots(tile, tile.face[1], false)}
+                    </div>
+                </div>
             </div>
         </div>
     );
