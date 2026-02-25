@@ -83,7 +83,7 @@ function App() {
         </div>
       </div>
 
-      <div className="flex gap-2 lg:gap-10 flex-col xl:flex-row w-full max-w-[1400px] mx-auto justify-center items-center xl:items-start shrink-0 overflow-y-auto lg:overflow-visible pb-4">
+      <div className="flex gap-2 lg:gap-10 flex-col xl:flex-row w-full max-w-[1400px] mx-auto justify-center items-center xl:items-start shrink-0 overflow-hidden lg:overflow-visible pb-1 sm:pb-2">
         {/* 左側與中間區塊 (標題與 Tiles) */}
         <div className="flex flex-col gap-2 lg:gap-6 w-full max-w-[600px] xl:w-auto items-center xl:items-start">
 
