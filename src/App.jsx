@@ -59,8 +59,8 @@ function App() {
       </h1>
 
       <div className="mb-4 sm:mb-8 md:mb-10 w-full flex justify-center overflow-x-auto pb-4">
-        {/* 手機版 (小於 md): 8 欄自動折 4 列，加大 gap 分散牌距，並使用 scale 將整體等比微調以填滿大部分手機畫面 */}
-        <div className="grid grid-cols-8 md:grid-cols-[repeat(16,minmax(0,1fr))] gap-2 sm:gap-3 md:gap-[2px] max-w-fit bg-black/20 p-2 sm:p-3 md:p-2 rounded-lg border border-black/40 shadow-inner mx-auto transform scale-[0.8] sm:scale-[0.9] md:scale-100 origin-top">
+        {/* 手機版 (小於 md): 8 欄自動折 4 列，加大 gap 分散牌距，並使用 min-w-max 避免被擠壓，最後以 scale 縮小 */}
+        <div className="grid grid-cols-8 md:grid-cols-[repeat(16,minmax(0,1fr))] gap-2 sm:gap-3 md:gap-[2px] min-w-max max-w-fit bg-black/20 p-2 sm:p-3 md:p-2 rounded-lg border border-black/40 shadow-inner mx-auto transform scale-[0.82] sm:scale-[0.9] md:scale-100 origin-top">
           {TILES.map((tile) => {
             const isUsed = playerHand.some(p => p.id === tile.id) || discardPile.some(d => d.id === tile.id);
             return (
