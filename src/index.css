@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: flex-start;
+  min-width: 320px;
+  min-height: 100vh;
+  /* 經典賭場桌面背景色 */
+  background-color: #5b896b;
+  background-image: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.3) 100%),
+                    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+#root {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* 牌的點數配置網格 */
+.dice-face {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 2px;
+  width: 100%;
+  height: 50%;
+  padding: 4px;
+}
+
+/* 各個點數點的位置對齊 */
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: white; /* 預設白色 */
+  box-shadow: inset -1px -1px 2px rgba(0,0,0,0.5), 1px 1px 1px rgba(255,255,255,0.4);
+  margin: auto;
+}
+
+.dot-red {
+  background-color: #e53e3e; /* 明顯的紅色 */
+  box-shadow: inset -1px -1px 2px rgba(0,0,0,0.6), 1px 1px 1px rgba(255,255,255,0.4);
+}
+
+/* 1點：正中央 */
+.dots-1 .dot-center { grid-column: 2; grid-row: 2; width: 12px; height: 12px; }
+
+/* 2點：對角線 */
+.dots-2 .dot-top-left { grid-column: 1; grid-row: 1; }
+.dots-2 .dot-bottom-right { grid-column: 3; grid-row: 3; }
+
+/* 3點：對角線+中央 */
+.dots-3 .dot-top-left { grid-column: 1; grid-row: 1; }
+.dots-3 .dot-center { grid-column: 2; grid-row: 2; }
+.dots-3 .dot-bottom-right { grid-column: 3; grid-row: 3; }
+
+/* 4點：四角 */
+.dots-4 .dot-top-left { grid-column: 1; grid-row: 1; }
+.dots-4 .dot-top-right { grid-column: 3; grid-row: 1; }
+.dots-4 .dot-bottom-left { grid-column: 1; grid-row: 3; }
+.dots-4 .dot-bottom-right { grid-column: 3; grid-row: 3; }
+
+/* 5點：四角+中央 */
+.dots-5 .dot-top-left { grid-column: 1; grid-row: 1; }
+.dots-5 .dot-top-right { grid-column: 3; grid-row: 1; }
+.dots-5 .dot-center { grid-column: 2; grid-row: 2; }
+.dots-5 .dot-bottom-left { grid-column: 1; grid-row: 3; }
+.dots-5 .dot-bottom-right { grid-column: 3; grid-row: 3; }
+
+/* 6點：左右各三 */
+.dots-6 .dot-top-left { grid-column: 1; grid-row: 1; }
+.dots-6 .dot-mid-left { grid-column: 1; grid-row: 2; }
+.dots-6 .dot-bottom-left { grid-column: 1; grid-row: 3; }
+.dots-6 .dot-top-right { grid-column: 3; grid-row: 1; }
+.dots-6 .dot-mid-right { grid-column: 3; grid-row: 2; }
+.dots-6 .dot-bottom-right { grid-column: 3; grid-row: 3; }
