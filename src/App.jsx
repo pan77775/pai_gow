@@ -51,14 +51,14 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen py-6 px-10 flex flex-col font-sans text-white">
+    <div className="min-h-screen py-6 px-4 md:px-10 flex flex-col font-sans text-white">
       {/* 頂部全區未分配牌，兩排陳列 */}
-      <h1 className="text-2xl font-bold mb-4 text-white/80 drop-shadow flex items-center gap-4">
+      <h1 className="text-xl md:text-2xl font-bold mb-4 text-white/80 drop-shadow flex flex-col sm:flex-row items-center gap-2 md:gap-4 text-center sm:text-left">
         天九牌 GTO 分析系統
         <span className="text-xs font-normal text-white/50 bg-black/30 px-2 py-1 rounded">※ 點擊牌將其移入手牌 / 棄牌堆</span>
       </h1>
 
-      <div className="mb-10 w-full flex justify-center">
+      <div className="mb-8 md:mb-10 w-full flex justify-center overflow-x-auto pb-4">
         <div className="grid grid-cols-[repeat(16,minmax(0,1fr))] gap-[2px] max-w-fit bg-black/20 p-2 rounded-lg border border-black/40 shadow-inner">
           {TILES.map((tile) => {
             const isUsed = playerHand.some(p => p.id === tile.id) || discardPile.some(d => d.id === tile.id);
@@ -74,16 +74,16 @@ function App() {
         </div>
       </div>
 
-      <div className="flex gap-10 flex-col xl:flex-row w-full max-w-[1400px] justify-center items-start">
+      <div className="flex gap-10 flex-col xl:flex-row w-full max-w-[1400px] justify-center items-center xl:items-start">
         {/* 左側與中間區塊 (標題與 Tiles) */}
-        <div className="flex flex-col gap-6 w-full xl:w-auto">
+        <div className="flex flex-col gap-6 w-full max-w-[600px] xl:w-auto">
 
           {/* Tiles in your hand */}
-          <div className="flex items-center justify-between xl:justify-start gap-4">
-            <h2 className="text-2xl w-[280px] text-right text-white drop-shadow-[1px_2px_3px_rgba(0,0,0,0.8)] font-medium tracking-wide">
+          <div className="flex flex-col sm:flex-row items-center justify-between xl:justify-start gap-2 sm:gap-4">
+            <h2 className="text-xl sm:text-2xl w-full sm:w-[280px] text-center sm:text-right text-white drop-shadow-[1px_2px_3px_rgba(0,0,0,0.8)] font-medium tracking-wide">
               Tiles in your hand:
             </h2>
-            <div className="flex gap-1 bg-black/10 p-2 rounded-lg border border-transparent min-w-[240px]">
+            <div className="flex gap-1 bg-black/10 p-2 rounded-lg border border-transparent min-w-[240px] justify-center">
               {playerHand.map(tile => (
                 <Tile key={`p-${tile.id}`} tile={tile} onClick={() => handleTileClick(tile, 'player')} />
               ))}
@@ -94,8 +94,8 @@ function App() {
           </div>
 
           {/* Discards / Dealer */}
-          <div className="flex items-start justify-between xl:justify-start gap-4 mt-2">
-            <h2 className="text-2xl w-[280px] text-right text-white drop-shadow-[1px_2px_3px_rgba(0,0,0,0.8)] font-medium tracking-wide mt-2">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between xl:justify-start gap-2 sm:gap-4 mt-2">
+            <h2 className="text-xl sm:text-2xl w-full sm:w-[280px] text-center sm:text-right text-white drop-shadow-[1px_2px_3px_rgba(0,0,0,0.8)] font-medium tracking-wide mt-0 sm:mt-2">
               Tiles in discard pile:
             </h2>
             <div className="flex flex-wrap max-w-[480px] gap-1 bg-black/10 p-2 rounded-lg border border-black/20 min-h-[115px]">
@@ -114,22 +114,22 @@ function App() {
           </div>
 
           {/* 控制按鈕區 */}
-          <div className="flex gap-4 mt-6 xl:ml-[296px] justify-center xl:justify-start">
+          <div className="flex flex-wrap gap-4 mt-4 sm:mt-6 justify-center xl:justify-start sm:ml-[296px]">
             <button
               onClick={reset}
-              className="px-6 py-2 bg-[#d8d8d8] text-black font-bold text-lg rounded shadow-3d-btn active:shadow-3d-btn-pressed hover:bg-white transition-all transform active:translate-y-1"
+              className="px-4 sm:px-6 py-2 bg-[#d8d8d8] text-black font-bold text-base sm:text-lg rounded shadow-3d-btn active:shadow-3d-btn-pressed hover:bg-white transition-all transform active:translate-y-1"
             >
               Reset
             </button>
             <button
               onClick={randomHand}
-              className="px-6 py-2 bg-[#d8d8d8] text-black font-bold text-lg rounded shadow-3d-btn active:shadow-3d-btn-pressed hover:bg-white transition-all transform active:translate-y-1"
+              className="px-4 sm:px-6 py-2 bg-[#d8d8d8] text-black font-bold text-base sm:text-lg rounded shadow-3d-btn active:shadow-3d-btn-pressed hover:bg-white transition-all transform active:translate-y-1"
             >
               Random Hand
             </button>
             <button
               onClick={analyze}
-              className="px-6 py-2 bg-[#d8d8d8] text-black font-bold text-lg rounded shadow-3d-btn active:shadow-3d-btn-pressed hover:bg-white transition-all transform active:translate-y-1 ml-4"
+              className="px-4 sm:px-6 py-2 bg-[#d8d8d8] text-black font-bold text-base sm:text-lg rounded shadow-3d-btn active:shadow-3d-btn-pressed hover:bg-white transition-all transform active:translate-y-1 sm:ml-4 w-full sm:w-auto mt-2 sm:mt-0"
             >
               Analyze
             </button>
@@ -138,8 +138,8 @@ function App() {
 
         {/* 右側分析結果表格區塊 */}
         {suggestions.length > 0 && (
-          <div className="flex-1 bg-white text-black shadow-2xl overflow-hidden rounded-sm border-2 border-black max-w-[600px] self-start mt-4 lg:mt-0">
-            <table className="w-full border-collapse text-sm">
+          <div className="flex-1 w-full bg-white text-black shadow-2xl overflow-x-auto rounded-sm border-2 border-black max-w-[600px] self-center xl:self-start mt-8 xl:mt-0">
+            <table className="w-full min-w-[340px] border-collapse text-xs sm:text-sm">
               <thead className="bg-[#4aa5d4] text-white font-bold text-base border-b-2 border-black">
                 <tr>
                   <th className="p-2 border-r border-black/30 w-[180px]">Play</th>
