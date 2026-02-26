@@ -1,16 +1,46 @@
-# React + Vite
+# Pai Gow Core Engine & Simulator (GTO & House Way)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+[繁體中文版 (Traditional Chinese)](README.zh-TW.md)
 
-Currently, two official plugins are available:
+This project focuses on the core algorithms and computational engine for **Pai Gow Game Theory Optimal (GTO)** and **House Way** strategy analysis.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+> **⚠️ Disclaimer**
+> The algorithms implemented in this project are built upon the assumption of a **fair, zero-sum game with no house edge and no commission**.
+> Real-world casinos take a 5% commission on wins and the banker wins all copy (tie) hands. The logic and EV values calculated by this engine are **STRICTLY NOT APPLICABLE to real-world casino environments**. Do not use this tool for actual gambling.
 
-## React Compiler
+## Project Focus: Core Evaluation & Strategy Engine
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The true value of this project lies in its deep and precise native JavaScript algorithmic implementations. The frontend serves solely as a visual verification and testing interface.
 
-## Expanding the ESLint configuration
+- **Comprehensive Evaluation Engine**:
+  Implements the complete ranking logic for all 32 traditional Pai Gow dominoes. Accurately handles Gee Joon (Supreme), Wongs, Gongs, Pairs, and localized suit/rank hierarchies.
+- **Authentic House Way Algorithm**:
+  Features an implementation of traditional House Way defensive strategies. The algorithm dynamically processes edge cases (e.g., when to split pairs vs. keep them) to output the statistically optimal dealer arrangement.
+- **GTO Mixed Strategy Matrix Solver**:
+  Goes beyond simple maximum EV calculations. The engine builds payoff matrices against the entire remaining opponent hand space (up to over 20,000 combinations) to determine the mathematically optimal Mixed Strategy frequencies (e.g., 60% Play A, 40% Play B).
+- **Extreme Performance & Caching**:
+  Heavily utilizes 32-bit bitmasking and Pre-calculation Caching Maps. The engine flawlessly processes and evaluates up to 35,960 permutations in milliseconds, enabling heavy statistical analysis directly within a browser environment.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Visual Frontend
+
+- A responsive, drag-and-drop testing board built with React and Tailwind CSS.
+- Renders accurate Domino dot patterns and displays real-time GT analysis reports, allowing developers to visually verify the engine's probability and strategy outputs.
+
+## Getting Started
+
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+2. **Start the development server:**
+   ```bash
+   npm run dev
+   ```
+
+## Standalone Scripts Directory
+
+The `scripts/` directory contains Node.js tools designed to stress-test the core Pai Gow engine without the frontend:
+- `testPerf.js`: benchmarking tool for hand combination generation.
+- `testHouseWay.js`: tests and verifies specific House Way rule execution in isolated environments.
+- `simulateGTO.cjs`: simulates long-running (hands > 10,000) GTO performance evaluations.
+- `exportTable.js`: exports enormous pre-calculated caches to external files.

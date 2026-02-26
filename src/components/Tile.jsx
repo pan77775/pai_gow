@@ -30,6 +30,7 @@ const renderDots = (tile, num, isTop) => {
                 );
             }
         case 3:
+            // 一般的 3 點是對角線 (和、猴(上半部)、雜五...等)
             return (
                 <>
                     <div className={`${dotClass} dot-top-left`}></div>
@@ -57,8 +58,26 @@ const renderDots = (tile, num, isTop) => {
                 </>
             );
         case 6:
+            // 天九牌長六：上下貫穿的 6 點菱形 (上下兩端各1，中間4顆構成菱形)
+            if (tile.name === '長六') {
+                if (isTop) {
+                    // 為了 DOM 結構簡單，我們把所有 6 個點都放在上半部畫出來，下半部留空
+                    return (
+                        <>
+                            <div className={`${dotClass} dot-long-1`}></div>
+                            <div className={`${dotClass} dot-long-2`}></div>
+                            <div className={`${dotClass} dot-long-3`}></div>
+                            <div className={`${dotClass} dot-long-4`}></div>
+                            <div className={`${dotClass} dot-long-5`}></div>
+                            <div className={`${dotClass} dot-long-6`}></div>
+                        </>
+                    );
+                } else {
+                    return null; // 下半部不畫東西，交給上半部一體成形畫完
+                }
+            }
+
             // 天牌[6,6] 的特別規則：
-            // 上方 6 點: 左三顆紅點、右三顆白點。下方 6 點: 左三面白點、右三顆紅點。
             if (tile.name === '天') {
                 const redLeft = isTop;
                 const leftClass = `dot ${redLeft ? 'dot-red' : ''}`;
@@ -129,17 +148,20 @@ export default function Tile({ tile, onClick, selected, disabled, small = false 
                     {/* 骨牌表面的高光反射層 */}
                     <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none rounded-md z-10"></div>
 
-                    {/* 上半部點數 (不再需要動態 scale，因為已被外層統包縮放) */}
-                    <div className={`dice-face dots-${tile.face[0]} flex-1 origin-top`}>
-                        {renderDots(tile, tile.face[0], true)}
+                    {/* 上半部點數 */}
+                    <div className={`dice-face ${tile.name === '長六' ? 'dots-6-long' : 'dots-' + tile.face[0]} flex-1 origin-top`}>
+                        {tile.name === '長六' ? renderDots(tile, 6, true) : renderDots(tile, tile.face[0], true)}
                     </div>
 
                     {/* 中間的白色分隔線 (骨牌特徵) */}
                     <div className="w-[80%] h-px bg-gray-600/60 mx-auto z-0 shadow-[0_1px_1px_rgba(0,0,0,0.8)]"></div>
 
-                    {/* 下半部點數 */}
-                    <div className={`dice-face dots-${tile.face[1]} flex-1 origin-bottom`}>
-                        {renderDots(tile, tile.face[1], false)}
+                    {/* 下半部點數 (長六下半部不畫，因為我們將它整合成一個貫穿上下的區塊，或是把它分為上下兩半的菱形畫) 
+                        考量到 DOM 結構與中線的呈現，還是分拆上下兩半最為自然。
+                        根據圖片，上半部是一個沒有下方尖端的菱形(上1,中2)，下半部是一個沒有上方尖端的菱形(中2,下1)。
+                    */}
+                    <div className={`dice-face ${tile.name === '長六' ? 'dots-6-long' : 'dots-' + tile.face[1]} flex-1 origin-bottom`}>
+                        {tile.name === '長六' ? renderDots(tile, 6, false) : renderDots(tile, tile.face[1], false)}
                     </div>
                 </div>
             </div>

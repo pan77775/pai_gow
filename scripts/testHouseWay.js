@@ -1,4 +1,4 @@
-import { TILES, analyzeHand } from './src/utils/paiGow.js';
+import { TILES, analyzeHand } from '../src/utils/paiGow.js';
 
 // Helper to manually find tiles by name + value
 const getTile = (name, faceStr) => {

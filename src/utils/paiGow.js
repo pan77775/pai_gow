@@ -123,8 +123,32 @@ export const getAllUniqueEvalsCombinations = () => {
             }
           }
 
+          // 排除對手的無效排列 (被絕對支配的劣勢策略)
+          const optimalOppEvals = [];
+          for (let oi = 0; oi < uniqueEvals.length; oi++) {
+            let isDominated = false;
+            for (let oj = 0; oj < uniqueEvals.length; oj++) {
+              if (oi === oj) continue;
+              const evA = uniqueEvals[oj];
+              const evB = uniqueEvals[oi];
+
+              const frontGE = evA.front.rankValue >= evB.front.rankValue;
+              const rearGE = evA.rear.rankValue >= evB.rear.rankValue;
+              const frontStrict = evA.front.rankValue > evB.front.rankValue;
+              const rearStrict = evA.rear.rankValue > evB.rear.rankValue;
+
+              if (frontGE && rearGE && (frontStrict || rearStrict)) {
+                isDominated = true;
+                break;
+              }
+            }
+            if (!isDominated) {
+              optimalOppEvals.push(uniqueEvals[oi]);
+            }
+          }
+
           const key = (1 << i) | (1 << j) | (1 << k) | (1 << l);
-          uniqueEvalsMap.set(key, uniqueEvals);
+          uniqueEvalsMap.set(key, optimalOppEvals);
         }
       }
     }
@@ -327,76 +351,82 @@ export const getHouseWayBest = (handTiles, currentEvals) => {
 
   const wghEvals = validEvals.filter(e => isWong(e) || isGong(e) || isHighNine(e));
   if (wghEvals.length > 0) {
-    if (wghEvals.length === 1) {
-      // 只有一種選擇，直接回傳
-      return wghEvals[0];
-    } else {
-      // 如果有2種以上的選擇，根據第四張牌決定優先順序
-      // Find the 4th tile (the one in the front hand that is NOT part of the pair making the Wong/Gong/HighNine)
-      // Usually the hand is (WGH Pair) + (Other Two). The 'other two' are e.front.tiles[0] and e.front.tiles[1].
+    // 即使只有一種 type，也要確保選出最好的 high hand (例如同時有天九和地九，要選天九)
+    // 或者是只有一個 wghEval 的情況
+    // 我們可以統一把尋找最佳 WGH 的邏輯合併在一起
+    // 如果有2種以上的選擇，根據第四張牌決定優先順序
+    // Find the 4th tile (the one in the front hand that is NOT part of the pair making the Wong/Gong/HighNine)
+    // Usually the hand is (WGH Pair) + (Other Two). The 'other two' are e.front.tiles[0] and e.front.tiles[1].
 
-      const getWghType = (e) => isWong(e) ? 'WONG' : (isGong(e) ? 'GONG' : 'HIGH_NINE');
+    const getWghType = (e) => isWong(e) ? 'WONG' : (isGong(e) ? 'GONG' : 'HIGH_NINE');
 
-      // Rule: Play High Nine if you can, otherwise play Gong, with Exceptions.
-      let preferredType = 'HIGH_NINE'; // Default preference if we can make it
-      if (!wghEvals.some(e => getWghType(e) === 'HIGH_NINE')) {
-        preferredType = 'GONG';
-      }
+    // Rule: Play High Nine if you can, otherwise play Gong, with Exceptions.
+    let preferredType = 'HIGH_NINE'; // Default preference if we can make it
+    if (!wghEvals.some(e => getWghType(e) === 'HIGH_NINE')) {
+      preferredType = 'GONG';
+    }
 
-      // Check exceptions based on hand tiles
-      const hasTileValue = (val) => handTiles.some(t => getTileValues(t).includes(val));
-      const hasTileId = (idPrefix) => handTiles.some(t => t.id.startsWith(idPrefix));
+    // Check exceptions based on hand tiles
+    const hasTileValue = (val) => handTiles.some(t => getTileValues(t).includes(val));
+    const hasTileId = (idPrefix) => handTiles.some(t => t.id.startsWith(idPrefix));
 
-      if (hasTileValue(11)) {
-        // Play Wong instead of Gong or High Nine if the fourth tile is an 11.
+    if (hasTileValue(11)) {
+      // Play Wong instead of Gong or High Nine if the fourth tile is an 11.
+      preferredType = 'WONG';
+    } else if (hasTileId("chang4_") || hasTileId("he_")) {
+      // Play Wong instead of High Nine if the fourth tile is a low 4 ("和" is 4, "長四" is 4, here typically low 4 means 和)
+      if (hasTileId("he_") || hasTileId("chang4_")) { // broadly interpreting 'low 4' as any 4 that isn't high (but we only have 和 and 長四 for 4s. 和 is Rank 12, 長四 is Rank 11)
         preferredType = 'WONG';
-      } else if (hasTileId("chang4_") || hasTileId("he_")) {
-        // Play Wong instead of High Nine if the fourth tile is a low 4 ("和" is 4, "長四" is 4, here typically low 4 means 和)
-        if (hasTileId("he_") || hasTileId("chang4_")) { // broadly interpreting 'low 4' as any 4 that isn't high (but we only have 和 and 長四 for 4s. 和 is Rank 12, 長四 is Rank 11)
-          preferredType = 'WONG';
-        }
-      } else if (hasTileId("chang4_") || hasTileId("he_")) {
-        // Play Gong instead of High Nine if the fourth tile is a 4.
-        // Wait, the previous rule covers low 4 -> Wong. So this means High 4 -> Gong.
-        // Let's refine parsing.
-        // H4 = "和", L4 = "長四".
-        // Play Wong instead of High Nine if 4th tile is L4 (Chang 4)
-        // Play Gong instead of High Nine if 4th tile is H4 (He)
       }
+    } else if (hasTileId("chang4_") || hasTileId("he_")) {
+      // Play Gong instead of High Nine if the fourth tile is a 4.
+      // Wait, the previous rule covers low 4 -> Wong. So this means High 4 -> Gong.
+      // Let's refine parsing.
+      // H4 = "和", L4 = "長四".
+      // Play Wong instead of High Nine if 4th tile is L4 (Chang 4)
+      // Play Gong instead of High Nine if 4th tile is H4 (He)
+    }
 
-      // Better way to check the specific 4th tile exception:
-      const hasL4 = hasTileId("chang4_");
-      const hasH4 = hasTileId("he_");
-      const hasL8 = hasTileId("za8_"); // 雜八
-      const has5 = hasTileId("za5_") || hasTileId("duan6_"); // Wait, 5 is 雜五
-      const hasZa5 = hasTileId("za5_");
+    // Better way to check the specific 4th tile exception:
+    const hasL4 = hasTileId("chang4_");
+    const hasH4 = hasTileId("he_");
+    const hasL8 = hasTileId("za8_"); // 雜八
+    const has5 = hasTileId("za5_") || hasTileId("duan6_"); // Wait, 5 is 雜五
+    const hasZa5 = hasTileId("za5_");
 
-      if (hasTileValue(11)) {
-        preferredType = 'WONG';
-      } else if (hasL4) {
-        // Play Wong instead of High Nine if the fourth tile is a low 4
-        if (wghEvals.some(e => getWghType(e) === 'WONG')) preferredType = 'WONG';
-      } else if (hasH4) {
-        // Play Gong instead of High Nine if the fourth tile is a 4 (H4)
-        if (wghEvals.some(e => getWghType(e) === 'GONG')) preferredType = 'GONG';
-      } else if (hasZa5 && hasL8) {
-        // Play Gong instead of High Nine if the fourth tile is a 5 and the 8 is a low 8.
-        if (wghEvals.some(e => getWghType(e) === 'GONG')) preferredType = 'GONG';
+    if (hasTileValue(11)) {
+      preferredType = 'WONG';
+    } else if (hasL4) {
+      // Play Wong instead of High Nine if the fourth tile is a low 4
+      if (wghEvals.some(e => getWghType(e) === 'WONG')) preferredType = 'WONG';
+    } else if (hasH4) {
+      // Play Gong instead of High Nine if the fourth tile is a 4 (H4)
+      if (wghEvals.some(e => getWghType(e) === 'GONG')) preferredType = 'GONG';
+    } else if (hasZa5 && hasL8) {
+      // Play Gong instead of High Nine if the fourth tile is a 5 and the 8 is a low 8.
+      if (wghEvals.some(e => getWghType(e) === 'GONG')) preferredType = 'GONG';
+    }
+
+    // Filter to preferred type
+    const preferredEvals = wghEvals.filter(e => getWghType(e) === preferredType);
+    const evalsToConsider = preferredEvals.length > 0 ? preferredEvals : wghEvals;
+
+    // 玩最好的 High Hand (例如同時有天九和地九，優先選天九)，
+    // 但遇到 High Hand 相同時(例如都是地九)，則優先保障 Low Hand (Maximizing Front)
+    let bestWGH = evalsToConsider[0];
+    for (let i = 1; i < evalsToConsider.length; i++) {
+      // 先比 High Hand
+      if (evalsToConsider[i].rear.rankValue > bestWGH.rear.rankValue) {
+        bestWGH = evalsToConsider[i];
       }
-
-      // Filter to preferred type
-      const preferredEvals = wghEvals.filter(e => getWghType(e) === preferredType);
-      const evalsToConsider = preferredEvals.length > 0 ? preferredEvals : wghEvals;
-
-      // 玩最好的 High Hand，但遇到能提升 Low Hand 時也優先保障 Low Hand (Maximizing Front)
-      let bestWGH = evalsToConsider[0];
-      for (let i = 1; i < evalsToConsider.length; i++) {
+      // 假如 High Hand 一樣大，比 Low Hand
+      else if (evalsToConsider[i].rear.rankValue === bestWGH.rear.rankValue) {
         if (evalsToConsider[i].front.rankValue > bestWGH.front.rankValue) {
           bestWGH = evalsToConsider[i];
         }
       }
-      return bestWGH;
     }
+    return bestWGH;
   }
 
   // All Other: Play the best low hand you can make, unless it ranks lower than 3-with-H6 and the best high hand is worth 7 or more points.
@@ -605,7 +635,28 @@ export const analyzeHand = (handTiles, discardPile = []) => {
 
   const houseWayBest = getHouseWayBest(handTiles, evaluated);
 
-  // 計算 House Way 預期勝率
+  // 1.5 標記無效排列 (被絕對支配的劣勢策略) 但不排除，以便 UI 呈現
+  for (let i = 0; i < evaluated.length; i++) {
+    let isDominated = false;
+    for (let j = 0; j < evaluated.length; j++) {
+      if (i === j) continue;
+      const evA = evaluated[j];
+      const evB = evaluated[i];
+
+      const frontGE = evA.front.rankValue >= evB.front.rankValue;
+      const rearGE = evA.rear.rankValue >= evB.rear.rankValue;
+      const frontStrict = evA.front.rankValue > evB.front.rankValue;
+      const rearStrict = evA.rear.rankValue > evB.rear.rankValue;
+
+      if (frontGE && rearGE && (frontStrict || rearStrict)) {
+        isDominated = true;
+        break;
+      }
+    }
+    evaluated[i].isDominated = evaluated[i] !== houseWayBest ? isDominated : false;
+  }
+
+  // 計算預期勝率 (包含所有排列的結果)
   const winRates = calculateWinRates(handTiles, evaluated, discardPile);
 
   // === Game Theory Matrix Solver (Grid Search Approximation) ===

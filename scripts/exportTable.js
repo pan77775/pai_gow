@@ -1,4 +1,4 @@
-import { TILES, evaluateAllVariations, getHouseWayBest } from './src/utils/paiGow.js';
+import { TILES, evaluateAllVariations, getHouseWayBest } from '../src/utils/paiGow.js';
 import fs from 'fs';
 
 const uniqueHands = new Map();

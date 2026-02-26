@@ -148,7 +148,6 @@ function App() {
                   key={`empty-d-${i}`}
                   className="w-[35px] h-[66.5px] lg:w-[50px] lg:h-[95px] rounded-md border-2 border-dashed border-white/20 m-[1px] sm:m-[2px] flex items-center justify-center text-white/30 text-[10px] lg:text-xs shadow-inner transition-colors pointer-events-none"
                 >
-                  空位
                 </div>
               ))}
             </div>
@@ -181,41 +180,59 @@ function App() {
                       <th className="p-1 sm:p-2 border-r border-black/30 px-1">Win</th>
                       <th className="p-1 sm:p-2 border-r border-black/30 px-1">Push</th>
                       <th className="p-1 sm:p-2 border-r border-black/30 px-1">Lose</th>
-                      <th className="p-1 sm:p-2">Return</th>
+                      <th className="p-1 sm:p-2 border-r border-black/30">Return</th>
+                      <th className="p-1 sm:p-2">GTO %</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {suggestions.map((s, index) => (
-                      <tr key={index} className={`border-b border-black/30 text-center font-mono ${index === 0 ? "bg-yellow-300 font-bold" : "bg-white"}`}>
-                        <td className="p-1 sm:p-2 border-r border-black/30 flex items-center justify-center gap-1">
-                          {/* 縮小的排法展示 */}
-                          <div className="flex flex-col gap-[2px] pr-1 sm:pr-2 border-r border-black/20 pointer-events-none">
-                            <div className="flex gap-[2px]">
-                              {s.front.tiles.map(t => (
-                                <Tile key={`f-${t.id}`} tile={t} small />
-                              ))}
+                    {suggestions.map((s, index) => {
+                      // 決定背景樣式：GTO 最優解 (index 0), HouseWay, 還是被支配的劣勢解
+                      let rowStyle = "bg-white";
+                      if (index === 0) rowStyle = "bg-yellow-300 font-bold";
+                      else if (s.isHouseWay) rowStyle = "bg-blue-100 font-medium";
+                      else if (s.isDominated) rowStyle = "bg-red-50 opacity-75";
+
+                      return (
+                        <tr key={index} className={`border-b border-black/30 text-center font-mono ${rowStyle}`}>
+                          <td className="p-1 sm:p-2 border-r border-black/30 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2">
+                            <div className="flex items-center gap-1 relative">
+                              {/* 縮小的排法展示 */}
+                              <div className="flex flex-col gap-[2px] pr-1 sm:pr-2 border-r border-black/20 pointer-events-none">
+                                <div className="flex gap-[2px]">
+                                  {s.front.tiles.map(t => (
+                                    <Tile key={`f-${t.id}`} tile={t} small />
+                                  ))}
+                                </div>
+                              </div>
+                              <div className="flex flex-col gap-[2px] pl-0 sm:pl-1 pointer-events-none">
+                                <div className="flex gap-[2px]">
+                                  {s.rear.tiles.map(t => (
+                                    <Tile key={`r-${t.id}`} tile={t} small />
+                                  ))}
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                          <div className="flex flex-col gap-[2px] pl-0 sm:pl-1 pointer-events-none">
-                            <div className="flex gap-[2px]">
-                              {s.rear.tiles.map(t => (
-                                <Tile key={`r-${t.id}`} tile={t} small />
-                              ))}
-                            </div>
-                          </div>
-                        </td>
-                        <td className="p-1 sm:p-2 border-r border-black/30 font-bold bg-[#cdedd7]/50 text-[10px] sm:text-xs lg:text-sm">{s.winRateStats.wins.toLocaleString()}</td>
-                        <td className="p-1 sm:p-2 border-r border-black/30 text-gray-600 text-[10px] sm:text-xs lg:text-sm">{s.winRateStats.ties.toLocaleString()}</td>
-                        <td className="p-1 sm:p-2 border-r border-black/30 text-gray-500 text-[10px] sm:text-xs lg:text-sm">{s.winRateStats.losses.toLocaleString()}</td>
-                        <td className="p-1 sm:p-2 font-bold text-blue-800 text-[10px] sm:text-xs lg:text-sm">{s.ev > 0 ? "+" : ""}{s.ev.toFixed(4)}</td>
-                      </tr>
-                    ))}
+                            {/* 標籤顯示 */}
+                            {/* 標籤顯示 (已移至下方說明) */}
+                          </td>
+                          <td className={`p-1 sm:p-2 border-r border-black/30 font-bold text-[10px] sm:text-xs lg:text-sm ${s.isDominated ? 'bg-red-100/50' : 'bg-[#cdedd7]/50'}`}>{s.winRateStats.wins.toLocaleString()}</td>
+                          <td className="p-1 sm:p-2 border-r border-black/30 text-gray-600 text-[10px] sm:text-xs lg:text-sm">{s.winRateStats.ties.toLocaleString()}</td>
+                          <td className="p-1 sm:p-2 border-r border-black/30 text-gray-500 text-[10px] sm:text-xs lg:text-sm">{s.winRateStats.losses.toLocaleString()}</td>
+                          <td className="p-1 sm:p-2 border-r border-black/30 font-bold text-blue-800 text-[10px] sm:text-xs lg:text-sm">{s.ev > 0 ? "+" : ""}{s.ev.toFixed(4)}</td>
+                          <td className="p-1 sm:p-2 font-bold text-purple-700 text-[10px] sm:text-xs lg:text-sm">
+                            {s.gameTheoryRatio > 0 ? `${(s.gameTheoryRatio * 100).toFixed(1)}%` : '-'}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
 
-              <div className="p-3 bg-gray-100 border-t border-black/20 text-xs text-right text-gray-600">
-                * Highlighted row represents the GTO (highest EV) strategy
+              <div className="p-3 bg-gray-100 border-t border-black/20 text-[10px] sm:text-xs text-center text-gray-600 flex flex-col sm:flex-row justify-center items-center gap-2 sm:gap-6">
+                <span>* Highlighted row represents the GTO (highest EV) strategy</span>
+                <span>* Blue row: House Way</span>
+                <span>* Red row: Dominated strategy</span>
               </div>
             </div>
           </div>

@@ -1,4 +1,4 @@
-const { TILES, analyzeHand, evaluateAllVariations, getHouseWayBest } = require('./src/utils/paiGow.js');
+const { TILES, analyzeHand, evaluateAllVariations, getHouseWayBest } = require('../src/utils/paiGow.js');
 
 const NUM_ROUNDS = 10000;
 
@@ -77,7 +77,7 @@ function runSimulation(numDiscards) {
         }
 
         // 5. Dealer plays strict House Way without knowing Player's hand
-        const { getAllHouseWayCombinations } = require('./src/utils/paiGow.js');
+        const { getAllHouseWayCombinations } = require('../src/utils/paiGow.js');
         const hwMap = getAllHouseWayCombinations();
         const dealerKey = (1 << dealerHand[0].index) | (1 << dealerHand[1].index) | (1 << dealerHand[2].index) | (1 << dealerHand[3].index);
         const dealerHW = hwMap.get(dealerKey);

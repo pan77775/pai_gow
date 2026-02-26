@@ -1,4 +1,4 @@
-import { TILES, analyzeHand } from './src/utils/paiGow.js';
+import { TILES, analyzeHand } from '../src/utils/paiGow.js';
 
 console.time("Generate all combinations");
 const combinations = [];
